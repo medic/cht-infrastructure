@@ -1,0 +1,8 @@
+/var/log/medic/medic.log {
+       daily
+       rotate 30
+       delaycompress
+       compress
+       notifempty
+       missingok
+}
