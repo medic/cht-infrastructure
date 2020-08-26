@@ -18,8 +18,6 @@ Depending on which distro you run, install the docker packages from [here](https
 
 ### Windows 
 
-The CHT docker image was built in Ubuntu so for it to work on windows you need to install The Windows Subsystem for Linux (WSL) in addition to docker desktop.
-
 - [WSL2](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
 
 - [Docker for Windows here](https://download.docker.com/win/stable/Docker%20for%20Windows%20Installer.exe)  and [here](https://docs.docker.com/docker-for-windows/install/)
@@ -128,12 +126,16 @@ You could have missed some of the instructions above and end with a bricked setu
 Stop containers:
 
 - `docker-compose down or docker stop medic-os && docker stop haproxy`
+
 Remove containers:
 
 - `docker-compose rm or docker rm medic-os && docker rm haproxy`
+
 Clean data volume:
 
 - `docker volume rm medic-data`
+
+Note: Running `docker-compose down -v` from the docker-compose.yml directory would do all the above 3 steps
 
 Prune system:
 
