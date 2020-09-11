@@ -40,6 +40,24 @@ If you do not have Hyper-V capability, but your server still supports virtualiza
 
 - [Docker for Mac](https://download.docker.com/mac/stable/Docker.dmg)
 
+## Verify install
+
+To test that you installed docker and docker-compose correctly, make sure you can do a simple test run by showing their versions: Note,your version may be different.
+
+```bash
+
+sudo docker-compose --version
+docker-compose version 1.27.1, build 509cfb99
+
+sudo docker --version
+Docker version 19.03.12, build 48a66213fe
+
+## check that docker runs well on your server. 
+
+sudo docker run hello-world
+
+```
+
 ## Installing with a compose file
 
 The CHT containers are installed using [docker compose](https://docs.docker.com/compose/reference/overview/) so that you can run multiple containers  as a single service.
