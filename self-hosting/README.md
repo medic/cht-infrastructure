@@ -1,10 +1,20 @@
 # HOSTING THE CHT APP
 
-The community health toolkit core framework has been packaged into a docker container to make it portable and easy to install. It is available from [dockerhub](https://hub.docker.com/r/medicmobile/medic-os). To learn more how to work with docker you could follow the tutorial [here](https://docker-curriculum.com/#getting-started) and the cheat sheet [here](https://www.docker.com/sites/default/files/d8/2019-09/docker-cheat-sheet.pdf).  
+The Community Health Toolkit (CHT) core framework has been packaged into a docker container to make it portable and easy to install. It is available from [dockerhub](https://hub.docker.com/r/medicmobile/medic-os). To learn more how to work with docker you could follow the tutorial [here](https://docker-curriculum.com/#getting-started) and the cheat sheet [here](https://www.docker.com/sites/default/files/d8/2019-09/docker-cheat-sheet.pdf).  
 
 ## Installing Docker Prerequisites
 
 This Ideally depends on which operating system you are running. You need to first install these on your box before you can run the CHT docker containers.
+
+### Minimum Hardware/Software Requirements
+
+The specifications listed here are the minimum required to host the CHT containers. Depending on the scale of your operation these need to be adjusted to suite your need. 
+
+- 4 GiB RAM
+- 2 CPU/vCPU
+- 50 GB Hard Disk (SSD prefered)
+- SSL certificates ( To be able to use the CHT app on mobile)
+- Root Access to the host server
 
 ### 64-bit Linux
 
@@ -78,24 +88,24 @@ networks:
 
 ```
 
-The install requires an admin password that it will configure in the database. You need to provide this externally as an environment variable. before you run the compose file, you need to export this variable as shown below.
+The install requires an admin password that it will configure in the database. You need to provide this externally as an environment variable. Before you run the compose file, you need to export this variable as shown below.
 
 `export DOCKER_COUCHDB_ADMIN_PASSWORD=myAwesomeCHTAdminPassword`
 
 You can then run docker-compose in the folder where you put your compose configuration yaml file as shown below.
 
 ```bash
-## run compose inside the coconfigulation folder as root 
+## run compose inside the configuration folder as root 
 
-$ sudo docker-compose up 
+sudo docker-compose up 
 
 ## In detached mode 
 
-$ sudo docker-compose up  -d 
+sudo docker-compose up  -d 
 
 ##  Outside the config folder 
 
-$ sudo docker-compose -f /path/to/docker-compose.yml up -d
+sudo docker-compose -f /path/to/docker-compose.yml up -d
 
 ```
 
@@ -119,23 +129,23 @@ Open a browser to: https://localhost
 You will have to click to through the SSL Security warning. Click Advanced -> Continue to site.
 
 
-### Clean up an re-install
+### Clean up and re-install
 
 You could have missed some of the instructions above and end with a bricked setup.  You can use the commands below to clean up and start afresh.
 
 Stop containers:
 
-- `docker-compose down or docker stop medic-os && docker stop haproxy`
+- `docker stop medic-os && docker stop haproxy`
 
 Remove containers:
 
-- `docker-compose rm or docker rm medic-os && docker rm haproxy`
+- `docker rm medic-os && docker rm haproxy`
 
 Clean data volume:
 
 - `docker volume rm medic-data`
 
-Note: Running `docker-compose down -v` from the docker-compose.yml directory would do all the above 3 steps
+Note: Running `docker-compose -f docker-compose.yml down -v`  would do all the above 3 steps
 
 Prune system:
 
@@ -143,6 +153,7 @@ Prune system:
 
 After following the above commands, you can re-run docker-compose up and create a fresh install (no previous data present)
 
+- `docker-compose -f docker-compose.yml up -d`
 
 ### Port Conflicts
 
@@ -185,24 +196,24 @@ Note: You can  substitute 8080, 444 with whichever ports are free on your host. 
 ##### Once inside container
 
 - view couchdb logs:
-`#less /srv/storage/medic-core/couchdb/logs/startup.log`
+`less /srv/storage/medic-core/couchdb/logs/startup.log`
 - view medic-api logs:
-`#less /srv/storage/medic-api/logs/medic-api.log`
+`less /srv/storage/medic-api/logs/medic-api.log`
 - view medic-sentinel logs:
-`#less /srv/storage/medic-sentinel/logs/medic-sentinel.log`
+`less /srv/storage/medic-sentinel/logs/medic-sentinel.log`
 
 #### View container stderr/stdout log
 
-`# docker logs medic-os`
-`# docker logs haproxy`
+`docker logs medic-os`
+`docker logs haproxy`
 
 #### Other handy commands
 
-- list running containers `#docker ps`
+- list running containers `docker ps`
 
-- list all available docker containers with their status `# docker ps -a`
+- list all available docker containers with their status `docker ps -a`
 
-- stop container `# docker stop <container_id>`
+- stop container `docker stop <container_id>`
 
 - start container `docker start <container_id>`
 
@@ -217,25 +228,19 @@ Once your application is up,  you can install your ssl certificates by following
 ### Copy certificates into the medic-os container
 
 ```bash
-$sudo docker ps
-$sudo docker cp /path/to/ssl.crt medic-os:/srv/settings/medic-core/nginx/private/ssl.crt
-$docker cp /path/to/ssl.key medic-os:/srv/settings/medic-core/nginx/private/ssl.key
+sudo docker cp /path/to/ssl.crt medic-os:/srv/settings/medic-core/nginx/private/ssl.crt
+sudo docker cp /path/to/ssl.key medic-os:/srv/settings/medic-core/nginx/private/ssl.key
 ```
 
-### Edit the nginx configuration file
+### Edit the nginx configuration file and restart
 
 ```bash
-$docker exec -it medic-os /bin/bash
+sudo docker exec -it medic-os /bin/bash
 sed -i "s|default.crt|ssl.crt|" /srv/settings/medic-core/nginx/nginx.conf
 sed -i "s|default.key|ssl.key|" /srv/settings/medic-core/nginx/nginx.conf
 
-```
-
-### Restart services
-
-```bash
 # enter medic-os container:
-$docker exec -it medic-os /bin/bash
+sudo docker exec -it medic-os /bin/bash
  /boot/svc-restart medic-core nginx
 
 ```
@@ -244,7 +249,7 @@ $docker exec -it medic-os /bin/bash
 
 ```bash
 # enter medic-os container:
-$docker exec -it medic-os /bin/bash
+docker exec -it medic-os /bin/bash
 cd /srv/storage/medic-core/nginx/logs/ 
 ls
 access.log error-ssl.log error.log startup.og
@@ -260,10 +265,10 @@ The exmaple below shows how to map this folder in ubuntu
 
 ```bash
 # create the /srv folder 
-$sudo mkdir  /srv 
+sudo mkdir  /srv 
 
 ## mount your volume to this folder 
-$sudo mount /dev/xvdg /srv # the attached volume number varries find your volume by running lsblk
+sudo mount /dev/xvdg /srv # the attached volume number varries find your volume by running lsblk
 ```
 
 Update your compose file  so that the containers store data to this folder
@@ -286,7 +291,7 @@ services:
 
 ```
 
-Alternatively  you can create the /srv folder on any drive with anough space that is regularly backed up. You then just map the path to the folder in the compose file like this.
+Alternatively  you can create the /srv folder on any drive with enough space that is regularly backed up. You then just map the path to the folder in the compose file like this.
 
 ```yaml
 volumes:
@@ -294,6 +299,8 @@ volumes:
 ```
 
 Be sure to check the available storage space regularly and expand your volume when needed
+
+It is good to note that if you have already set up your containers, you need to find a way to back up your data before you change the mount points to a backed up volume else you risk losing all your data. 
 
 
 
