@@ -8,7 +8,7 @@ This Ideally depends on which operating system you are running. You need to firs
 
 ### Minimum Hardware/Software Requirements
 
-The specifications listed here are the minimum required to host the CHT containers. Depending on the scale of your operation these need to be adjusted to suite your need. 
+The specifications listed here are the minimum required to host the CHT containers. Depending on the scale of your operation these need to be adjusted to  your needs. 
 
 - 4 GiB RAM
 - 2 CPU/vCPU
@@ -62,49 +62,13 @@ sudo docker run hello-world
 
 The CHT containers are installed using [docker compose](https://docs.docker.com/compose/reference/overview/) so that you can run multiple containers  as a single service.
 
-Start by choosing the location where you would like to save your compose configuration file.  Then create your docker compose file (`docker-compose.yml`) with contents as listed below.
+Start by choosing the location where you would like to save your compose configuration file.  Then create your docker compose file (docker-compose.yml) by cding into the correct directory and running:
 
-```yaml
-version: '3.7'
-
-services:
-  medic-os:
-    container_name: medic-os
-    image: medicmobile/medic-os:cht-3.9.0-rc.2
-    volumes:
-      - medic-data:/srv
-    ports:
-     - 80:80
-     - 443:443
-    working_dir: /srv
-    depends_on:
-      - haproxy
-    networks:
-      - medic-net
-    environment:
-      - DOCKER_NETWORK_NAME=haproxy
-      - DOCKER_COUCHDB_ADMIN_PASSWORD=$DOCKER_COUCHDB_ADMIN_PASSWORD
-
-  haproxy:
-    container_name: haproxy
-    image: medicmobile/haproxy:rc-1.17
-    volumes:
-      - medic-data:/srv
-    environment:
-      - COUCHDB_HOST=medic-os
-      - HA_PASSWORD=$DOCKER_COUCHDB_ADMIN_PASSWORD
-    networks:
-      - medic-net
-
-volumes:
-  medic-data:
-    name: medic-data
-
-networks:
-  medic-net:
-    name: medic-net
+```bash
+curl -q -o docker-compose.yml https://raw.githubusercontent.com/medic/cht-infrastructure/master/self-hosting/main/docker-compose.yml
 
 ```
+
 
 The install requires an admin password that it will configure in the database. You need to provide this externally as an environment variable. Before you run the compose file, you need to export this variable as shown below.
 
@@ -115,14 +79,9 @@ You can then run docker-compose in the folder where you put your compose configu
 ```bash
 ## run compose inside the configuration folder as root 
 
-sudo docker-compose up 
+sudo docker-compose  /path/to/docker-compose.yml up 
 
 ## In detached mode 
-
-sudo docker-compose up  -d 
-
-##  Outside the config folder 
-
 sudo docker-compose -f /path/to/docker-compose.yml up -d
 
 ```
@@ -133,8 +92,8 @@ Once containers are setup, please run the following command from your host termi
 
 ```bash
 
-$ docker exec -it medic-os /bin/bash -c "sed -i 's/--install=3.9.0/--complete-install/g' /srv/scripts/horticulturalist/postrun/horticulturalist"
-$ docker exec -it medic-os /bin/bash -c "/boot/svc-disable medic-core openssh && /boot/svc-disable medic-rdbms && /boot/svc-disable medic-couch2pg"
+sudo docker exec -it medic-os /bin/bash -c "sed -i 's/--install=3.9.0/--complete-install/g' /srv/scripts/horticulturalist/postrun/horticulturalist"
+sudo docker exec -it medic-os /bin/bash -c "/boot/svc-disable medic-core openssh && /boot/svc-disable medic-rdbms && /boot/svc-disable medic-couch2pg"
 
 ```
 
@@ -241,7 +200,14 @@ Note: You can  substitute 8080, 444 with whichever ports are free on your host. 
 
 Once your application is up,  you can install your ssl certificates by following the steps below.
 
-- First you need to have your ssl certificate files handy. Both the key file (`ssl.key`) that you sued to generate the certificate and the certificate file (`ssl.crt`) issued by certification authority e.g. letsencrypt. 
+- First you need to have your ssl certificate files handy. Both the key file (`ssl.key`) that you used to generate the certificate and the certificate file (`ssl.crt`) issued by certification authority e.g. letsencrypt. 
+
+Note: If your certification authority issued you `.pem` files, you can easily convert `.pem` files to `.crt` using the command below. 
+
+```bash
+openssl x509 -outform der -in your-cert.pem -out your-cert.crt
+
+```
 
 ### Copy certificates into the medic-os container
 
@@ -279,7 +245,7 @@ Docker containers are [stateless](https://www.redhat.com/en/topics/cloud-native-
 
 Ideally you should map this folder to a volume that is backed up regulaly by your cloud hosting provider.
 
-The exmaple below shows how to map this folder in ubuntu
+The exmaple below shows how to map this folder in Ubuntu
 
 ```bash
 # create the /srv folder 
