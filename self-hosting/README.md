@@ -42,7 +42,7 @@ If you do not have Hyper-V capability, but your server still supports virtualiza
 
 ## Verify install
 
-To test that you installed docker and docker-compose correctly, make sure you can do a simple test run by showing their versions: Note,your version may be different.
+To test that you installed docker and docker-compose correctly, make sure you can do a simple test run by showing their versions. Note,your version may be different.
 
 ```bash
 
