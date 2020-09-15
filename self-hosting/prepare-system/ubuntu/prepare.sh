@@ -21,7 +21,12 @@ sudo useradd -d /home/medic -m medic
 sudo mkdir -p /home/medic/self-hosting/main
 
 sudo cp ../../main/docker-compose.yml /home/medic/self-hosting/main/
-echo "HA_PASSWORD=$(sudo cat /srv/storage/medic-core/passwd/admin)" >  /home/medic/self-hosting/main/.env
+
+HA_FILE=/srv/storage/medic-core/passwd/admin
+if test -f "$HA_FILE"; then
+    echo "HA_PASSWORD=$(sudo cat $HA_FILE)" >  /home/medic/self-hosting/main/.env
+fi
+
 sudo adduser medic sudo
 # We don't want medic to have to use a sudo password
 echo "medic ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
