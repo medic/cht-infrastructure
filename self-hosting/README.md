@@ -86,7 +86,16 @@ sudo docker-compose -f /path/to/docker-compose.yml up -d
 
 ```
 
-Note In certain shells, docker-compose may not interpolate the admin password that was exported above. In that case, your admin user had a password automatically generated. Note the New CouchDB Administrative User and New CouchDB Administrative Password in the output terminal. You can retrieve these via running `docker logs medic-os` and searching the terminal.
+Note In certain shells, docker-compose may not interpolate the admin password that was exported above. Check if this is the case by searching the logs in the medic-os dockers instance. If the `docker logs medic-os` command below returns a user and password, then the export above failed, and you should use this user and password to complete the installation:
+
+```bash
+docker logs medic-os  |grep 'New CouchDB Admin'
+[2020/09/10 18:49:03] Info: New CouchDB Administrative User: medic
+[2020/09/10 18:49:03] Info: New CouchDB Administrative Password: password
+
+```
+You can keep monitoring the logs untill you get the `Setting up software (100% complete)` message. At this stage all containers are fully set up. 
+
 
 Once containers are setup, please run the following command from your host terminal:
 
@@ -101,7 +110,7 @@ The first command fixes a postrun script for horticulturalist to prevent unique 
 
 ### Visit your project
 
-Open a browser to: https://localhost
+If you're running this on your local machine, then open a browser to https://localhost. Otherwise open a browser to the public IP of the host if it's running remotely.
 
 You will have to click to through the SSL Security warning. Click Advanced -> Continue to site.
 
@@ -134,11 +143,8 @@ After following the above commands, you can re-run docker-compose up and create 
 
 ### Port Conflicts
 
-In case you are already running services on HTTP(80) and HTTPS(443), you will have to map new ports to the medic-os container.
+In case you are already running services on HTTP(80) and HTTPS(443),you will have to either remap ports to the medic-os container or stop the services using those ports.
 
-Turn off and remove all existing containers that were started:
-
-- `docker-compose down && docker-compose rm`
 To find out which service is using a conflicting port: On Linux:
 
 `sudo netstat -plnt | grep ':<port>'`
@@ -161,6 +167,14 @@ services:
      - 444:443
 
 ```
+
+Turn off and remove all existing containers that were started:
+
+ `sudo docker-compose -f /path/to/docker-compose.yml down`
+
+Bring Up the containers in detached mode with the new forwarded ports.
+
+ `sudo docker-compose -f /path/to/docker-compose.yml up -d`
 
 Note: You can  substitute 8080, 444 with whichever ports are free on your host. You would now visit https://localhost:444 to visit your project.
 
