@@ -65,7 +65,7 @@ The CHT containers are installed using [docker compose](https://docs.docker.com/
 Start by choosing the location where you would like to save your compose configuration file.  Then create your docker compose file (docker-compose.yml) by cding into the correct directory and running:
 
 ```bash
-curl -q -o docker-compose.yml https://raw.githubusercontent.com/medic/cht-infrastructure/master/self-hosting/main/docker-compose.yml
+curl -s -o docker-compose.yml https://raw.githubusercontent.com/medic/cht-infrastructure/master/self-hosting/main/docker-compose.yml
 
 ```
 
@@ -79,7 +79,7 @@ You can then run docker-compose in the folder where you put your compose configu
 ```bash
 ## run compose inside the configuration folder as root 
 
-sudo docker-compose  /path/to/docker-compose.yml up 
+sudo docker-compose  docker-compose.yml up 
 
 ## In detached mode 
 sudo docker-compose -f /path/to/docker-compose.yml up -d
@@ -148,6 +148,7 @@ In case you are already running services on HTTP(80) and HTTPS(443),you will hav
 To find out which service is using a conflicting port: On Linux:
 
 `sudo netstat -plnt | grep ':<port>'`
+
 On Mac (10.10 and above):
 
 `sudo lsof -iTCP -sTCP:LISTEN -n -P | grep ':<port>'` 
