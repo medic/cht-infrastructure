@@ -234,12 +234,11 @@ sudo docker cp /path/to/ssl.key medic-os:/srv/settings/medic-core/nginx/private/
 ### Edit the nginx configuration file and restart
 
 ```bash
+# enter medic-os container:
 sudo docker exec -it medic-os /bin/bash
 sed -i "s|default.crt|ssl.crt|" /srv/settings/medic-core/nginx/nginx.conf
 sed -i "s|default.key|ssl.key|" /srv/settings/medic-core/nginx/nginx.conf
-
-# enter medic-os container:
-sudo docker exec -it medic-os /bin/bash
+# restart mginx
  /boot/svc-restart medic-core nginx
 
 ```
