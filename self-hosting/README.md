@@ -79,7 +79,7 @@ You can then run docker-compose in the folder where you put your compose configu
 ```bash
 ## run compose inside the configuration folder as root 
 
-sudo docker-compose  docker-compose.yml up 
+sudo docker-compose -f docker-compose.yml up 
 
 ## In detached mode 
 sudo docker-compose -f /path/to/docker-compose.yml up -d
