@@ -6,7 +6,7 @@ The Community Health Toolkit (CHT) core framework has been packaged into a docke
 
 This Ideally depends on which operating system you are running. You need to first install these on your box before you can run the CHT docker containers.
 
-### Minimum Hardware/Software Requirements
+### Minimum Hardware Requirements
 
 The specifications listed here are the minimum required to host the CHT containers. Depending on the scale of your operation these need to be adjusted to  your needs. 
 
