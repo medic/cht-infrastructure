@@ -14,6 +14,7 @@ sudo apt install -y docker.io
 
 # Install pip and install docker-compose using pip
 sudo apt-get install -y python-pip
+sudo pip install pyrsistent==0.16.1
 sudo pip install docker-compose
 
 # Add the medic user
