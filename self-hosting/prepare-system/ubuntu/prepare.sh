@@ -21,7 +21,8 @@ sudo pip install docker-compose
 sudo useradd -d /home/medic -m medic
 sudo mkdir -p /home/medic/self-hosting/main
 
-sudo cp ../../main/docker-compose.yml /home/medic/self-hosting/main/
+sudo curl -s https://raw.githubusercontent.com/medic/cht-core/master/docker-compose.yml \
+  -o /home/medic/self-hosting/main/docker-compose.yml
 
 HA_FILE=/srv/storage/medic-core/passwd/admin
 if test -f "$HA_FILE"; then
