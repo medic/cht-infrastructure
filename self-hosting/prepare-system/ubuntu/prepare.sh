@@ -12,10 +12,10 @@ sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 sudo apt install -y docker.io
 
-# Install pip and install docker-compose using pip
-sudo apt-get install -y python-pip
-sudo pip install pyrsistent==0.16.1
-sudo pip install docker-compose
+# Install docker-compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" \
+-o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
 
 # Add the medic user
 sudo useradd -d /home/medic -m medic
