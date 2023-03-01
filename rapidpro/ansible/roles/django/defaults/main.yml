@@ -157,7 +157,7 @@ django_settings:
   ELASTICSEARCH_URL: "'https://elasticsearch.io.com'"
   SECRET_KEY: "'xxxxx'"
   IS_PROD: True
-  FCM_API_KEY: "'AAAAfLeGIro:APA91bH-WsBbhjnW0NTCiw1mxRMxMLzu7TEa7I69O2DbXu-hXDEets-F7D7BS3Th1bmttLnZRJxgBC_Y3SNo535om8SVw12jMyRZgpUcjwL89KXAciIZ8BQ4k7WIzSyGJ2my0ZQ6pZio'"
+  FCM_API_KEY: "'AFCM_API_KEY_FROM_GOOGLE'"
   # Middleware requires healtcheck if you are using AWS ALB. Ideally, this would allow us to rip out nginx. Saving for future use.
   # temba.middleware.HealthCheckMiddleware",
   # inside temba/middleware.py:
