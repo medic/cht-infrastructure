@@ -1,0 +1,6 @@
+---
+- name: Rebuild the index
+  command: "{{ rapidpro_indexer_rebuild_command }}"
+  args:
+    chdir: "{{ rapidpro_indexer_active_package_symlink }}"
+    creates: "{{ rapidpro_indexer_index_built_file }}"

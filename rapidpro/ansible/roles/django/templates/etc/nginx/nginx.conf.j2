@@ -1,0 +1,132 @@
+# nginx.conf
+# daemon off;
+user www-data;
+pid /var/run/nginx.pid;
+worker_processes auto;
+
+events {
+    worker_connections 10240;
+}
+
+http {
+    include mime.types; 
+    sendfile    on;
+    keepalive_timeout   300;
+    proxy_read_timeout  600;
+    client_max_body_size    150M; 
+    # the upstream component nginx needs to connect to
+    upstream django {
+        # server unix:///path/to/your/mysite/mysite.sock; # for a file socket
+        server 0.0.0.0:8000; # for a web port socket (we'll use this first)
+    }
+
+    upstream courier_server {
+        server {{courier_server_ip}}:8005 fail_timeout=60;
+    }
+
+    upstream mailroom_server {
+        server {{mailroom_server_ip}}:8090 fail_timeout=60;
+    }
+    # configuration of the server
+    server {
+        # the port your site will be served on
+        listen      80;
+        # the domain name it will serve for
+        server_name {{django_settings.HOSTNAME}}; # substitute your machine's IP address or FQDN
+        charset     utf-8;
+        error_log   {{django_system_user_home}}/app/nginx_error.log;
+
+        location / {
+            return  301 https://$host$request_uri;
+        }
+    }
+
+    server {
+
+        listen  443 ssl;
+        server_name {{nginx_server_name}};
+        error_log   {{django_system_user_home}}/app/nginx_ssl_error.log;
+        
+	gzip    on;
+        gzip_disable    "msie6";
+        gzip_vary   on;
+        gzip_proxied    any;
+        gzip_comp_level 6;
+        gzip_buffers    16 8k;
+        gzip_http_version   1.1;
+
+        gzip_types  text/plain text/css text/csv text/xml text/javascript
+                    application/json application/x-javascript application/xml
+                    application/vnd.ms-fontobject application/octet-stream
+                    application/x-font-woff multipart/related image/svg+xml;
+
+        # SSL configuration
+
+        ssl_certificate {{django_system_user_home}}/default.crt;
+        ssl_certificate_key {{django_system_user_home}}/default.key;
+        ssl_prefer_server_ciphers   on;
+        ssl_session_timeout 10m;
+        ssl_session_cache   shared:SSL:5m;
+        ssl_protocols   TLSv1.2 TLSv1.1 TLSv1;
+        ssl_ciphers    ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:DHE-RSA-CAMELLIA256-SHA:DHE-RSA-AES128-SHA:DES-CBC3-SHA:!EXP:!ADH:!aNULL;
+
+        add_header X-Frame-Options  SAMEORIGIN;
+#	location ~ \.css {
+#	    add_header Content-Type	text/css;
+#        }
+
+#	location ~ \.js {
+#	    add_header Content-Type	application/x-javascript;
+#	}
+        # Django media
+        location ^~ /media/  {
+            alias {{django_system_user_home}}/app/media/;  # your Django project's media files - amend as required
+        }
+
+#        location ^~ /static/ {
+#            alias {{django_system_user_home}}/app/sitestatic/; # your Django project's static files - amend as required
+#        }
+
+        location ^~ /sitestatic/ {
+            alias {{django_system_user_home}}/app/sitestatic/;
+           # root {{django_system_user_home}}/app;
+            autoindex on;
+            gzip_static on;
+        }
+
+        location ^~ /mr/ {
+            proxy_set_header Host $http_host;
+            proxy_pass http://mailroom_server;
+            break;
+        } 
+
+        location ^~ /c/ {
+            proxy_set_header Host $http_host;
+            proxy_pass http://courier_server;
+            break;
+        }
+
+       # location /android {
+       #     default_type application/vnd.android.package-archive;
+       #     add_header Content-Type application/vnd.android.package-archive;
+       #     add_header Content-Disposition "attachment";
+           # alias {{django_system_user_home}}/app/app-debug-Medic-mobile-RP.apk;
+           # rewrite ^/android$ {{django_system_user_home}}/app/app-debug-Medic-mobile-RP.apk;
+       #     try_files {{django_system_user_home}}/app/app-debug-Medic-mobile-RP.apk {{django_system_user_home}}/app/app-debug-Medic-mobile-RP.apk;
+       # }
+   # Finally, send all non-media requests to the Django server.
+        location / {
+            #uwsgi_pass  django;
+            proxy_pass	http://django/;
+            proxy_redirect	off;
+            proxy_set_header Host	$host;
+            proxy_set_header X-Forwarded_for	$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded_Proto	https;
+            proxy_connect_timeout	1000;
+	    proxy_send_timeout	1000;
+	    proxy_read_timeout	1000;
+	    send_timeout	1000;
+           # include     {{django_system_user_home}}/app/uwsgi.ini; # the uwsgi_params file you installed
+        }
+    }
+}

@@ -1,0 +1,41 @@
+---
+rapidpro_archiver_version: "5.6.0"
+rapidpro_archiver_system_user: "rapidpro-archiver"
+rapidpro_archiver_system_group: "rapidpro-archiver"
+rapidpro_archiver_service_name: "{{ rapidpro_archiver_system_user }}"
+rapidpro_archiver_system_home: "/home/{{ rapidpro_archiver_system_user }}"
+# System architecture for the host. Possible value are:
+#   - linux_amd64
+#   - darwin_amd64
+rapidpro_archiver_system_architecture: "linux_amd64"
+# The package repository to download RapidPro Archiver tarballs from
+rapidpro_archiver_download_url: "https://github.com/nyaruka/rp-Archiver/releases/download/v{{ rapidpro_archiver_version }}/rp-Archiver_{{ rapidpro_archiver_version }}_{{ rapidpro_archiver_system_architecture }}.tar.gz"
+# The root directory RapidPro Archiver versioned directories are created
+rapidpro_archiver_package_directory_root: "{{ rapidpro_archiver_system_home }}/app-versioned"
+# The name to give the directory the RapidPro Archiver binary is copied to
+rapidpro_archiver_package_directory_name: "{{ rapidpro_archiver_version }}"
+rapidpro_archiver_active_package_symlink: "{{ rapidpro_archiver_system_home }}/app"
+rapidpro_archiver_postgresql_url: "postgres://rapidpro:xxxxxx@postgres-yyyyy.com/rapidpro?sslmode=disable"
+rapidpro_archiver_elasticsearch_url: "https://elasticsearch_url"
+rapidpro_archiver_index: "contacts"
+
+rapidpro_archiver_config_template: "rapidpro_archiver_active_package_symlink/archiver.toml.j2"
+
+# Environment variables to be used by the RapidPro Archiver service
+rapidpro_archiver_environment_vars: {
+    ARCHIVER_ARCHIVE_MESSAGES : true,
+    ARCHIVER_ARCHIVE_RUNS : true,
+    ARCHIVER_AWS_ACCESS_KEY_ID: "xxxxx",
+    ARCHIVER_AWS_SECRET_ACCESS_KEY : "xxxxxx",
+    ARCHIVER_DB : "postgres://rapidpro:xxxxx@<hidden>.com/rapidpro?sslmode=disable",
+    ARCHIVER_DELETE : false,
+    ARCHIVER_KEEP_FILES : false,
+    ARCHIVER_LOG_LEVEL : "info",
+    ARCHIVER_S3_BUCKET : "xxxxxx",
+    ARCHIVER_S3_DISABLE_SSL : true,
+    ARCHIVER_S3_ENDPOINT : "https://s3.amazonaws.com",
+    ARCHIVER_S3_FORCE_PATH_STYLE : false,
+    ARCHIVER_S3_REGION : eu-west-2,
+    ARCHIVER_SENTRY_DSN : dsn,
+    ARCHIVER_UPLOAD_TO_S3 : true,
+  }

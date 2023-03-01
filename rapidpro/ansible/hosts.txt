@@ -1,0 +1,11 @@
+[controller]
+
+control ansible_connection=local
+
+[courier_mail_room_indexer_archiver]
+
+ec2-18-135-46-237.eu-west-2.compute.amazonaws.com ansible_user=ubuntu ansible_ssh_private_key_file=/keys/rapidpro.pem
+
+[celery]
+
+ec2-18-133-236-194.eu-west-2.compute.amazonaws.com ansible_user=ubuntu ansible_ssh_private_key_file=/keys/rapidpro.pem

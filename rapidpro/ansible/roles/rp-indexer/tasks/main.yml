@@ -1,0 +1,10 @@
+---
+- name: Install RapidPro Indexer
+  include_tasks: install.yml
+
+- name: Configure RapidPro Indexer
+  include_tasks: configure.yml
+
+- name: Rebuild the index
+  include_tasks: rebuild.yml
+  when: rapidpro_indexer_rebuild

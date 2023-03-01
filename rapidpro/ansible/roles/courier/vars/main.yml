@@ -1,0 +1,2 @@
+---
+courier_package_directory_path: "{{ courier_package_directory_root }}/{{ courier_package_directory_name }}"

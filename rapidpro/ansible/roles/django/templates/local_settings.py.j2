@@ -1,0 +1,15 @@
+{% if django_top_python_statements %}
+{% for stmt in django_top_python_statements %}
+{{ stmt }}
+{% endfor %}
+{% endif %}
+
+{% for k,v in django_settings.items() %}
+{{k}} = {{v}}
+{% endfor %}
+
+{% if django_bottom_python_statements %}
+{% for stmt in django_bottom_python_statements %}
+{{ stmt }}
+{% endfor %}
+{% endif %}

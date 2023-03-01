@@ -1,0 +1,3 @@
+---
+mailroom_package_directory_path: "{{ mailroom_package_directory_root }}/{{ mailroom_package_directory_name }}"
+mailroom_binary_name: "mailroom"

@@ -1,0 +1,5 @@
+---
+rapidpro_archiver_package_directory_path: "{{ rapidpro_archiver_package_directory_root }}/{{ rapidpro_archiver_package_directory_name }}"
+rapidpro_archiver_binary_name: "rp-archiver"
+rapidpro_archiver_index_built_file: "{{ rapidpro_archiver_active_package_symlink }}/.index-built"
+rapidpro_archiver_rebuild_command: "./{{ rapidpro_archiver_binary_name }} -rebuild{% if rapidpro_archiver_cleanup %} -cleanup{% endif %} && echo 'index built' > {{ rapidpro_archiver_index_built_file }}"

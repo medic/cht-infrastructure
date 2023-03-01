@@ -1,0 +1,5 @@
+---
+rapidpro_indexer_package_directory_path: "{{ rapidpro_indexer_package_directory_root }}/{{ rapidpro_indexer_package_directory_name }}"
+rapidpro_indexer_binary_name: "rp-indexer"
+rapidpro_indexer_index_built_file: "{{ rapidpro_indexer_active_package_symlink }}/.index-built"
+rapidpro_indexer_rebuild_command: "./{{ rapidpro_indexer_binary_name }} -rebuild{% if rapidpro_indexer_cleanup %} -cleanup{% endif %} && echo 'index built' > {{ rapidpro_indexer_index_built_file }}"

@@ -1,0 +1,6 @@
+---
+- name: Install Mailroom
+  include_tasks: install.yml
+
+- name: Configure Mailroom
+  include_tasks: configure.yml

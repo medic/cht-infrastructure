@@ -1,0 +1,35 @@
+---
+courier_version: "5.7.0"
+courier_package_repository_url: "https://github.com/nyaruka/courier/releases/download"
+# System architecture for the host. Possible value are:
+#   - linux_amd64
+#   - windows_amd64
+#   - darwin_amd64 https://github.com/nyaruka/courier/releases/download/v5.7.0/courier_5.7.0_linux_amd64.tar.gz
+courier_system_architecture: "linux_amd64"
+courier_download_url: "{{ courier_package_repository_url }}/v{{ courier_version }}/courier_{{ courier_version }}_{{ courier_system_architecture }}.tar.gz"
+courier_system_user: courier
+courier_service_name: "{{ courier_system_user }}"
+courier_system_group: courier
+courier_system_home: "/home/{{ courier_system_user }}"
+# The root directory Courier versioned directories are created
+courier_package_directory_root: "{{ courier_system_home }}/app-versioned"
+# The name to give the directory the Courier binary is copied to
+courier_package_directory_name: "{{ courier_version }}"
+# Path to the symbolic link pointing to the current active Courier
+# binary
+courier_active_package_symlink: "{{ courier_system_home }}/app"
+# Courier environment variables to be set. Check
+# https://github.com/nyaruka/courier#rapidpro-configuration
+# for the full list of variables
+courier_environment_vars:
+  COURIER_DOMAIN: "rapidpro.app.medicmobile.org"
+  COURIER_SPOOL_DIR: "{{ courier_system_home }}/spool"
+  COURIER_DB: "postgres://rapidpro:xxxxxx@postgres-yyyyy.com:5432/rapidpro"
+  COURIER_REDIS: "redis://redis.yyyyyy.com:6379/15"
+  COURIER_S3_REGION: "eu-west-2"
+  COURIER_S3_MEDIA_BUCKET: "xxxxx"
+  COURIER_S3_MEDIA_PREFIX: "media"
+  COURIER_AWS_ACCESS_KEY_ID: xxxxxx
+  COURIER_AWS_SECRET_ACCESS_KEY: xxxxxx
+  COURIER_ADDRESS: "internal_ip"
+  COURIER_PORT: 8005

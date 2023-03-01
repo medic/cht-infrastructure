@@ -1,0 +1,21 @@
+[Unit]
+Description=Rapidpro Celery log reader
+After=network.target
+
+[Service]
+Type=simple
+User=django
+Group=www-data
+WorkingDirectory=/home/django/app
+RuntimeDirectory=celery-django
+ExecStart=/bin/sh -c 'tail -f "/dev/null"'
+ExecStop=/bin/systemctl kill rapidpro-celery.service
+ExecStartPost=/bin/sh -c \
+  'tail -f  "/var/log/django/celery-celery1.log" |systemd-cat -t "rapidpro-celery" & \
+   tail -f  "/var/log/django/celery-celery2.log" |systemd-cat -t "rapidpro-celery" & \
+   tail -f  "/var/log/django/celery-celery3.log" |systemd-cat -t "rapidpro-celery" & \
+   tail -f  "/var/log/django/celery-celery4.log" |systemd-cat -t "rapidpro-celery" &'
+
+
+[Install]
+WantedBy=multi-user.target

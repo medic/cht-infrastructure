@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  role_name: courier
+  author: Ona Engineering
+  description: Installs and configures Courier. Courier is a messaging gateway for text-based messaging channels.
+  company: Ona Systems Inc
+  license: Apache v2.0
+  min_ansible_version: 1.2
+  platforms:
+    - name: Ubuntu
+      versions:
+        - 16.04
+        - 18.04
+  galaxy_tags:
+    - courier
+    - rapidpro
+
+dependencies: []

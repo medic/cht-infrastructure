@@ -1,0 +1,27 @@
+[uwsgi]
+{% if django_wsgi_http %}
+http={{django_wsgi_http}}
+{% endif %}
+uid={{ django_wsgi_user }}
+gid={{ django_wsgi_group }}
+chdir={{ django_codebase_path }}
+module={{ django_wsgi_module }}
+master={{ django_wsgi_master }}
+processes={{ django_wsgi_processes }}
+pidfile={{ django_pid_file }}
+vacuum={{ django_wsgi_vacuum }}                # clear environment on exit
+harakiri={{ django_wsgi_harakiri }}            # respawn processes taking more than 240 seconds
+max-requests={{ django_wsgi_max_requests }}    # respawn processes after serving 5000 requests
+logto={{ django_wsgi_logto }}
+virtualenv={{ django_wsgi_virtualenv }}
+buffer-size={{ django_wsgi_buffer_size }}
+{% if django_wsgi_env %}
+env={{ django_wsgi_env }}
+{% endif %}
+stats={{ django_wsgi_stats }}
+{% if django_wsgi_enable_threads %}
+enable-threads
+{% endif %}
+{% if django_wsgi_memory_report %}
+memory-report
+{% endif %}

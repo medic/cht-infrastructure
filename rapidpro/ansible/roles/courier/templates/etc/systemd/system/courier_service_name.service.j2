@@ -1,0 +1,16 @@
+[Unit]
+Description={{ courier_service_name }} service
+After=network.target
+
+[Service]
+User={{ courier_system_user }}
+Group={{ courier_system_group }}
+Type=simple
+ExecStart={{ courier_active_package_symlink }}/courier
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+EnvironmentFile={{ courier_active_package_symlink }}/environment
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target

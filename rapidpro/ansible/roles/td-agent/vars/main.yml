@@ -1,0 +1,9 @@
+---
+tdagent_plugins_versions:
+      systemd:
+        name: fluent-plugin-systemd
+        version: 1.0.1
+      elasticsearch:
+        name: fluent-plugin-elasticsearch
+        version: 4.2.2
+

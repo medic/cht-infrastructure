@@ -1,0 +1,16 @@
+[Unit]
+Description=Rapidpro Django log reader
+After=network.target
+
+[Service]
+Type=simple
+User=django
+Group=www-data
+WorkingDirectory=/home/django/app
+RuntimeDirectory=celery-django
+ExecStart=/bin/sh -c 'tail -f "/dev/null"'
+ExecStop=/bin/systemctl kill rapidpro-django.service
+ExecStartPost=/bin/sh -c \
+  'tail -f  "/var/log/django/uwsgi_django.log" |systemd-cat -t "rapidpro-django" &'
+[Install]
+WantedBy=multi-user.target

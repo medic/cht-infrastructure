@@ -1,0 +1,29 @@
+- name: reload td-agent
+  service: name=td-agent state=reloaded
+
+- name: restart td-agent
+  service: name=td-agent state=restarted
+
+- name: stop td-agent
+  service: name=td-agent state=stopped
+
+- name: restart rapidpro-celery
+  systemd:
+    name: rapidpro-celery
+    state: restarted
+    enabled: true
+    daemon_reload: true
+
+- name: restart rapidpro-django
+  systemd:
+    name: rapidpro-django
+    state: restarted
+    enabled: true
+    daemon_reload: true
+
+- name: restart rapidpro-celery-beat
+  systemd:
+    name: rapidpro-celery-beat
+    state: restarted
+    enabled: true
+    daemon_reload: true

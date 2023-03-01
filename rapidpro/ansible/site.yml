@@ -1,0 +1,18 @@
+- hosts: courier_mail_room_indexer_archiver
+  become: true 
+  roles:
+     - role: courier
+       courier_version: "5.7.0"
+     - role: mailroom
+       mailroom_version: "5.6.2"
+     - role: rp-indexer
+       rapidpro_indexer_version: "5.6.0"
+     - role: rp-archiver
+       rapidpro_archiver__version: "5.6.0"
+     - role: td-agent
+
+- hosts: celery
+  become: true
+  roles:
+     - role: django
+     - role: td-agent-django

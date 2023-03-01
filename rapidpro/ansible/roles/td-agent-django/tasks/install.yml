@@ -1,0 +1,57 @@
+---
+- name: install ubuntu dev tools
+  apt:
+    name: ubuntu-dev-tools
+    state: present
+    update_cache: yes
+
+
+- name: install td-agent
+  shell: curl -L https://toolbelt.treasuredata.com/sh/install-ubuntu-bionic-td-agent2.5.sh | sh
+  args:
+    warn: no
+  
+- name: add td-agent.conf
+  copy:
+    src: td-agent.conf
+    dest: /etc/td-agent/td-agent.conf
+    owner: td-agent
+    group: td-agent
+    mode: '0644'
+    backup: yes
+
+- name: install fluent elastic search plugin 
+  shell:  td-agent-gem install fluent-plugin-elasticsearch
+ 
+
+- name: install fluent systemd plugin 
+  shell:  td-agent-gem install fluent-plugin-systemd -v 1.0.1
+  notify:
+    - restart td-agent
+  
+- name: ensure that td-agent can execute in logs folder
+  command: find /var/log/ -type d -exec chmod 0775 {} \;
+
+- name: Copy the Celery log systemd unit File
+  template:
+    src: "etc/systemd/system/rapidpro-celery.j2"
+    dest: "/etc/systemd/system/rapidpro-celery.service"
+  notify:
+    - restart rapidpro-celery
+
+- name: Copy the Django log systemd unit File
+  template:
+    src: "etc/systemd/system/rapidpro-django.j2"
+    dest: "/etc/systemd/system/rapidpro-django.service"
+  notify:
+    - restart rapidpro-django
+
+- name: Copy the Celery Beat log systemd unit File
+  template:
+    src: "etc/systemd/system/rapidpro-celery-beat.j2"
+    dest: "/etc/systemd/system/rapidpro-celery-beat.service"
+  notify:
+    - restart rapidpro-celery-beat
+
+
+  

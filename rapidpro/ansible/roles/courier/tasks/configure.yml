@@ -1,0 +1,17 @@
+---
+- name: Copy the Courier environment file
+  template:
+    src: "courier_active_package_symlink/environment.j2"
+    dest: "{{ courier_active_package_symlink }}/environment"
+    owner: "{{ courier_system_user }}"
+    group: "{{ courier_system_group }}"
+    mode: 0750
+  notify:
+    - restart courier
+
+- name: Copy the Courier systemd Unit File
+  template:
+    src: "etc/systemd/system/courier_service_name.service.j2"
+    dest: "/etc/systemd/system/{{ courier_service_name }}.service"
+  notify:
+    - restart courier

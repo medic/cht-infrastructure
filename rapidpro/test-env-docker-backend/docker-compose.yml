@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  rapidpro-elastic-search:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.7.0
+    container_name: rapidpro-elastic-search
+    environment:
+      - node.name=rapidpro-elastic-search
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - rapidpro-elastic-search-net
+  rapidpro-redis:
+    image: "redis:alpine"
+    container_name: rapidpro-redis
+    ports:
+     - "6379:6379"
+  rapidpro-postgres:
+    image: mdillon/postgis:9.6
+    ports:
+     - "5432:5432"
+    environment:
+      - POSTGRES_DB=rapidpro
+      - POSTGRES_PASSWORD=rapidpro
+      - POSTGRES_USER=rapidpro
+networks:
+  rapidpro-elastic-search-net:
+    name: rapidpro-elastic-search-net
+
+volumes:
+  es_data:
+    

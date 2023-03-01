@@ -1,0 +1,96 @@
+---
+- name: Symlink settings to temba
+  file:
+    src: "{{ django_checkout_path }}/medic/local_settings.py"
+    dest: "{{ django_checkout_path }}/temba/settings.py"
+    owner: "{{ django_system_user }}"
+    group: "{{ django_system_group }}"
+    state: link
+
+- name: Run Django init commands
+  django_manage:
+    command: "{{ item }}"
+    app_path: "{{ django_checkout_path }}"
+    virtualenv: "{{ django_venv_path }}"
+  with_items: "{{ django_init_commands }}"
+  become_user: "{{ django_system_user }}"
+
+- name: Make sure the static folder exists
+  file:
+    path: "{{ django_static_path }}"
+    state: directory
+    owner: "{{ django_system_user }}"
+    group: "{{ django_system_group }}"
+    mode: 0755
+  when:
+    - django_static_path is defined
+    - django_static_path is not none
+
+- name: Make sure the mediafolder exists
+  file:
+    path: "{{ django_media_path }}"
+    state: directory
+    owner: "{{ django_system_user }}"
+    group: "{{ django_system_group }}"
+    mode: "{{ django_media_path_mode }}"
+  when:
+    - django_media_path is defined
+    - django_media_path is not none
+
+- name: Make the new codebase current
+  file:
+    src: "{{ django_checkout_path }}"
+    dest: "{{ django_codebase_path }}"
+    state: link
+    force: yes
+    owner: "{{ django_system_user }}"
+    group: "{{ django_system_group }}"
+  notify:
+    - restart_service
+    - restart_celery
+
+- name: Copy uwsgi.ini
+  template:
+    src: uwsgi.ini.j2
+    dest: "{{ django_checkout_path }}/uwsgi.ini"
+    mode: 0644
+    owner: "{{ django_system_user }}"
+    group: "{{ django_system_group }}"
+  notify:
+    - restart_service
+
+
+# - name: Copy nginx config
+#   copy:
+#     src: "{{ playbook_dir }}/roles/django/templates/etc/nginx/nginx.conf"
+#     dest: "{{ django_checkout_path }}/nginx.conf"
+#     owner: "{{ django_system_user }}"
+#     group: "{{ django_system_group }}"
+#     mode: 0644
+
+- name:  Copy nginx config
+  template:
+    src: "{{ playbook_dir }}/roles/django/templates/etc/nginx/nginx.conf.j2"
+    dest: "/etc/nginx/nginx.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart_nginx_service
+
+- name: customize logrotate rules
+  template:
+    src: etc/logrotate.d/django.j2
+    dest: "/etc/logrotate.d/{{ django_service_name }}"
+    owner: root
+    group: root
+    mode: 0644
+
+
+# check if superuser user exists, if not, create user.
+- name: Check if superuser user exists, if not, create user.
+  django_manage:
+    command: shell -c "from django.contrib.auth.hashers import make_password; from django.contrib.auth import get_user_model; MyUser = get_user_model(); MyUser.objects.filter( username__exact = '{{ django_superuser_username }}' ).count() == 0 or exit(); new_super_user = MyUser( username = '{{ django_superuser_username }}', email='{{ django_superuser_email }}', is_superuser = True, is_staff = True ); new_super_user.password = make_password('{{ django_superuser_password }}'); new_super_user.save();"
+    app_path: "{{ django_codebase_path }}"
+    virtualenv: "{{ django_venv_path }}"
+  

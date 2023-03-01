@@ -1,0 +1,251 @@
+# user
+django_system_user: "django"
+django_system_group: "www-data"
+django_system_user_home: "/home/{{ django_system_user }}"
+
+# git
+django_git_url: https://github.com/rapidpro/rapidpro
+django_git_version: "v5.7.0" #"v5.6.5" wont install due to smartmin dependency
+django_git_key:
+django_git_key_ssh_file:
+django_git_key_filename: "id_ed25519"
+django_remove_git_key: True
+django_copy_key_from_file: false
+
+# system-wide dependencies
+django_python_source_version: "3.6"
+django_python_version: "python3.6"  # or python3.x
+django_system_wide_dependencies:
+  - build-essential
+  - git
+  - python3.6-dev
+  - gdal-bin
+  - libgdal-dev
+  - nodejs
+  - coffeescript
+  - nginx
+
+# service
+django_service_name: "{{ django_system_user }}"
+django_service_type: "notify"
+django_service_restart: "on-failure"
+django_service_group: "{{ django_system_group }}"
+django_service_unit_after: "network.target"
+django_service_install_wantedby: "multi-user.target"
+django_pid_socks_dir: "/var/run/{{ django_service_name }}"
+django_manage_services: False
+
+django_env_name: "prod"
+django_codebase_path: "{{ django_system_user_home }}/app"
+django_versioned_path: "{{ django_codebase_path }}-versioned"
+django_checkout_path: "{{ django_versioned_path }}/{{ ansible_date_time['epoch'] }}"
+django_venv_path: "{{ django_system_user_home }}/.virtualenvs/{{ django_system_user }}"
+django_log_path: "/var/log/{{ django_service_name }}"
+django_pid_file: "{{ django_pid_socks_dir }}/{{ django_service_name }}.pid"
+django_proxy_read_timeout: "300s"
+django_environment_script_name: environment.sh
+django_environment_vars: []
+django_celeryd_extra_env_vars: []
+django_celerybeat_extra_env_vars: []
+
+# Python packages
+# Set django_apt_python_ppa to blank string if you don't want to install any PPA
+django_apt_python_ppa: "ppa:deadsnakes/ppa"
+django_recreate_virtual_env: False
+
+## pipenv
+django_use_pipenv: False
+
+## pip
+django_use_regular_old_pip: True
+django_pip_paths:
+  - "{{ django_checkout_path }}/pip-freeze.txt"
+
+## other pip packages not in requirements files
+django_pip_packages:
+  - pygdal==2.2.3.3
+  - requests_toolbelt
+  - celery==4.4.2
+  - uwsgi
+
+# Django
+django_local_settings_path: "{{ django_checkout_path }}/medic/local_settings.py"
+django_init_commands:
+  - migrate --noinput
+  - collectstatic --noinput
+#django_static_path: "{{ django_checkout_path }}/sitestatic/"
+#django_media_path: "{{ django_checkout_path }}/media/"
+django_media_path_mode: "0755"
+django_settings_module: temba.settings
+
+# template settings path
+django_settings_template_path: "../templates/local_settings.py.j2"
+
+## Django settings
+django_settings:
+  HOSTNAME: "'rapidpro.app.medicmobile.org'"
+  # I have saved these, because we would like to serve all static from s3.
+  #AWS_BUCKET_DOMAIN_NAME: "'xxxxx.s3.eu-west-2.amazonaws.com'"
+  #AWS_ACCESS_KEY_ID: "'xxxxx'"
+  #AWS_SECRET_ACCESS_KEY: "'xxxxx'"
+  #AWS_S3_REGION_NAME: "'eu-west-2'"
+  #AWS_QUERYSTRING_AUTH: False
+  #AWS_QUERYSTRING_EXPIRE: "36000"
+  #AWS_S3_ENDPOINT_URL: "'https://xxxxx.s3.eu-west-2.amazonaws.com'"
+  #AWS_S3_DOMAIN: "'xxxxx.s3.eu-west-2.amazonaws.com'"
+  #STATIC_URL: "'https://xxxxx.s3.eu-west-2.amazonaws.com/'"
+  STATIC_URL: "'/sitestatic/'"
+  #STATICFILES_STORAGE: "'storages.backends.s3boto3.S3Boto3Storage'"
+  MEDIA_URL: "'/media/'"
+  #DEFAULT_FILE_STORAGE: "'storages.backends.s3boto3.S3Boto3Storage'"
+  #COMPRESS_ENABLED: "'on'"
+  #COMPRESS_URL: "'https://xxxxxx.s3.eu-west-2.amazonaws.com/'"
+  #COMPRESS_ROOT: STATIC_ROOT
+  #COMPRESS_STORAGE: "'storages.backends.s3boto3.S3Boto3Storage'"
+  #COMPRESS_CSS_HASHING_METHOD: "'content'"
+  STORAGE_URL: "'/media'"
+  #BASE_DIR: "os.path.dirname(os.path.dirname(__file__))"
+  SITE_ID: 1
+  DATABASES: |
+    {
+      'default': {
+          'ENGINE': 'django.contrib.gis.db.backends.postgis',
+          'NAME': 'rapidpro',
+          'USER': 'rapidpro',
+          'PASSWORD': 'xxxx',
+          'HOST': 'prod-yyyyy.rds.amazonaws.com',
+          'PORT': '5432',
+          'ATOMIC_REQUESTS': True,
+          'CONN_MAX_AGE': 60,
+          'OPTIONS': {},
+      }
+    }
+  #STATICFILES_DIRS: |
+  #  (
+  #    os.path.join(BASE_DIR, "static"),
+  #    os.path.join(BASE_DIR, "media"),
+  #    os.path.join(BASE_DIR, "node_modules/@nyaruka/flow-editor/build"),
+  #    os.path.join(BASE_DIR, "node_modules/react/umd"),
+  #    os.path.join(BASE_DIR, "node_modules/react-dom/umd"),
+  #    os.path.join(BASE_DIR, "node_modules"),
+  #  )
+  CACHES: |
+    {
+      'default': {
+          "BACKEND": "django_redis.cache.RedisCache",
+          "LOCATION": "redis://%s:%s/%s" % ("redis.yyyyy.com", 6379, 15),
+          "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
+      }
+    }
+  REDIS_HOST: "'redis.yyyyy.com'"
+  BROKER_URL: "'redis://redis.yyyyy.com:6379/15'"
+  EMAIL_BACKEND: "'django.core.mail.backends.smtp.EmailBackend'"
+  EMAIL_HOST: "'smtp.gmail.com'"
+  EMAIL_PORT: "587"
+  EMAIL_HOST_USER: "'messaging-service@medicmobile.org'"
+  EMAIL_HOST_PASSWORD: "'xxxxx'"
+  EMAIL_USE_TLS: True
+  FLOW_FROM_EMAIL: "'messaging-service@medicmobile.org'"
+  DEFAULT_FROM_EMAIL: "'Hello From RapidPro - CHT <messaging-service@medicmobile.org>'"
+  MAILROOM_AUTH_TOKEN: "'xxxxx'"
+  MAILROOM_URL: "'http://internal_ip:8090'" 
+  ALLOWED_HOSTS: "['localhost', '127.0.0.1', '.app.medicmobile.org', 'elastic_ip']"
+  DEBUG: True
+  SEND_MESSAGES: True
+  SEND_EMAILS: True
+  SEND_RECEIPTS: True
+  ELASTICSEARCH_URL: "'https://elasticsearch.io.com'"
+  SECRET_KEY: "'xxxxx'"
+  IS_PROD: True
+  FCM_API_KEY: "'AAAAfLeGIro:APA91bH-WsBbhjnW0NTCiw1mxRMxMLzu7TEa7I69O2DbXu-hXDEets-F7D7BS3Th1bmttLnZRJxgBC_Y3SNo535om8SVw12jMyRZgpUcjwL89KXAciIZ8BQ4k7WIzSyGJ2my0ZQ6pZio'"
+  # Middleware requires healtcheck if you are using AWS ALB. Ideally, this would allow us to rip out nginx. Saving for future use.
+  # temba.middleware.HealthCheckMiddleware",
+  # inside temba/middleware.py:
+  #temba/middleware.py:
+  #from django.http import HttpResponse
+  #from django.utils.deprecation import MiddlewareMixin
+
+  #class HealthCheckMiddleware(MiddlewareMixin):
+  #  def process_request(self, request):
+  #      if request.META["PATH_INFO"] == "/ping/":
+  #          return HttpResponse("pong")
+
+  MIDDLEWARE: |
+    (
+        "django.middleware.security.SecurityMiddleware",
+        "django.contrib.sessions.middleware.SessionMiddleware",
+        "django.middleware.common.CommonMiddleware",
+        "django.middleware.csrf.CsrfViewMiddleware",
+        "django.contrib.auth.middleware.AuthenticationMiddleware",
+        "django.contrib.messages.middleware.MessageMiddleware",
+        "django.middleware.clickjacking.XFrameOptionsMiddleware",
+        "temba.middleware.ConsentMiddleware",
+        "temba.middleware.BrandingMiddleware",
+        "temba.middleware.OrgTimezoneMiddleware",
+        "temba.middleware.ActivateLanguageMiddleware",
+        "temba.middleware.OrgHeaderMiddleware",
+    )
+  BRANDING: |
+    {
+      'rapidpro.io': {
+          'slug': 'rapidpro',
+          'name': 'RapidPro - CHT',
+          'org': 'RapidPro',
+          'colors': 'primary=#0c6596',
+          'styles': ['brands/rapidpro/font/style.css'],
+          'welcome_topup': 1000,
+          'email': 'messaging-service@medicmobile.org',
+          'support_email': 'messaging-service@medicmobile.org',
+          'link': 'https://rapidpro.app.medicmobile.org',
+          'api_link': 'https://rapidpro.app.medicmobile.org/api/',
+          'docs_link': 'https://docs.rapidpro.io',
+          'domain': 'rapidpro.app.medicmobile.org',
+          'favico': 'brands/rapidpro/rapidpro.ico',
+          'splash': '/brands/rapidpro/splash.jpg',
+          'logo': '/brands/rapidpro/logo.png',
+          'allow_signups': True,
+          'description': "Visually build nationally scalable mobile applications from anywhere in the world.",
+          'credits': "Copyright &copy; 2012-2020 UNICEF, Nyaruka, and individual contributors. All Rights Reserved."
+      }
+    }
+  DEFAULT_BRAND: "'rapidpro.io'"
+## python statements included at the top of settings file
+django_top_python_statements:
+  - import os
+  - import copy
+  - import warnings
+  - from .settings_common import *  # noqa
+## python statements included at the bottom of settings file
+django_bottom_python_statements:
+
+# wsgi
+django_wsgi_module: "temba.wsgi:application"
+django_wsgi_processes: 3
+django_wsgi_harakiri: 240
+django_wsgi_max_requests: 5000
+django_wsgi_http: "0.0.0.0:8000"
+django_wsgi_socket: "127.0.0.1:8002"
+django_wsgi_chmod_socket: 777
+django_wsgi_user: "{{ django_system_user }}"
+django_wsgi_group: "{{ django_system_group }}"
+django_wsgi_vacuum: True
+django_wsgi_master: True
+django_wsgi_logto: "{{ django_log_path }}/uwsgi_{{ django_service_name }}.log"
+django_wsgi_virtualenv: "{{ django_venv_path }}"
+django_wsgi_buffer_size: 8192
+django_wsgi_env: "HTTPS=on"
+django_wsgi_stats: "{{ django_pid_socks_dir }}/{{ django_service_name }}_stats.sock"
+django_wsgi_enable_threads: False
+django_wsgi_memory_report: False
+
+# celery
+django_enable_celery: True
+django_celery_app: temba
+django_celeryd_nodes: 4
+django_celeryd_service_name: "celeryd-{{ django_service_name }}"
+django_celerybeat_service_name: "celerybeat-{{ django_service_name }}"
+django_celeryd_opts: "--time-limit=300 --concurrency=8"
+django_celeryd_log_level: "DEBUG"
+django_celerybeat_log_level: "DEBUG"
+django_celeryd_pid_file:
+django_celery_beat_pid_file:

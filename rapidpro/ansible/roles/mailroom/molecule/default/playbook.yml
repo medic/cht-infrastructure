@@ -1,0 +1,6 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: ansible-mailroom
+      mailroom_version: "0.0.195"

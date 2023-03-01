@@ -1,0 +1,27 @@
+---
+- name: Copy the RapidPro Indexer config file
+  template:
+    src: "{{ rapidpro_indexer_config_template }}"
+    dest: "{{ rapidpro_indexer_active_package_symlink }}/indexer.toml"
+    owner: "{{ rapidpro_indexer_system_user }}"
+    group: "{{ rapidpro_indexer_system_group }}"
+    mode: 0750
+  notify:
+    - restart rapidpro-indexer
+
+- name: Copy the RapidPro Indexer environment file
+  template:
+    src: "rapidpro_indexer_active_package_symlink/environment.j2"
+    dest: "{{ rapidpro_indexer_active_package_symlink }}/environment"
+    owner: "{{ rapidpro_indexer_system_user }}"
+    group: "{{ rapidpro_indexer_system_group }}"
+    mode: 0750
+  notify:
+    - restart rapidpro-indexer
+
+- name: Copy the RapidPro Indexer systemd unit file
+  template:
+    src: "etc/systemd/system/rapidpro_indexer_service_name.service.j2"
+    dest: "/etc/systemd/system/{{ rapidpro_indexer_service_name }}.service"
+  notify:
+    - restart rapidpro-indexer

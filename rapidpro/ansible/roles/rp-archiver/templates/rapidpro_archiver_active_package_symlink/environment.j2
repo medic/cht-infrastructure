@@ -1,0 +1,5 @@
+{% if rapidpro_archiver_environment_vars|length > 0%}
+{% for var_name,var_value in rapidpro_archiver_environment_vars.items() %}
+{{ var_name }}={{ var_value }}
+{% endfor %}
+{% endif %}

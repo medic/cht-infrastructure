@@ -1,0 +1,6 @@
+---
+- name: Install Courier
+  include_tasks: install.yml
+
+- name: Configure Courier
+  include_tasks: configure.yml

@@ -1,0 +1,9 @@
+volume_path: /dev/xvdf
+mount_path: /srv/install
+file_system_type: ext4
+# The group id that should be applied on the mount point.
+group: root
+ # The octal permission mode applied to the mount point.
+mode: "0755"
+  # The owner id that should be applied on the mount point.
+owner: root

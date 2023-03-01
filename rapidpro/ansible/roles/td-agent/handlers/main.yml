@@ -1,0 +1,9 @@
+- name: reload td-agent
+  service: name=td-agent state=reloaded
+
+- name: restart td-agent
+  service: name=td-agent state=restarted
+
+- name: stop td-agent
+  service: name=td-agent state=stopped
+

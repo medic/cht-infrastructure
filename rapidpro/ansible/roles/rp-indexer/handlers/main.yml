@@ -1,0 +1,7 @@
+---
+- name: restart rapidpro-indexer
+  systemd:
+    name: "{{ rapidpro_indexer_service_name }}"
+    state: restarted
+    enabled: true
+    daemon_reload: true

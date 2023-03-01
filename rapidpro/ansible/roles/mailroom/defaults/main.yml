@@ -1,0 +1,41 @@
+---
+mailroom_version: "5.6.2"
+mailroom_system_user: "mailroom"
+mailroom_system_group: "mailroom"
+mailroom_service_name: "{{ mailroom_system_user }}"
+mailroom_system_home: "/home/{{ mailroom_system_user }}"
+# System architecture for the host. Possible value are:
+#   - linux_amd64
+#   - darwin_amd64
+mailroom_system_architecture: "linux_amd64"
+# The package repository to download Mailroom tarballs from
+mailroom_download_url: "https://github.com/nyaruka/mailroom/releases/download/v{{ mailroom_version }}/mailroom_{{ mailroom_version }}_{{ mailroom_system_architecture }}.tar.gz"
+# The root directory Mailroom versioned directories are created
+mailroom_package_directory_root: "{{ mailroom_system_home }}/app-versioned"
+# The name to give the directory the Mailroom binary is copied to
+mailroom_package_directory_name: "{{ mailroom_version }}"
+mailroom_active_package_symlink: "{{ mailroom_system_home }}/app"
+mailroom_environment_vars:
+  MAILROOM_ADDRESS: "internal_ip"
+  MAILROOM_ATTACHMENT_DOMAIN: "rapidpro.app.medicmobile.org"
+  MAILROOM_AUTH_TOKEN: "xxxxx"
+  MAILROOM_AWS_ACCESS_KEY_ID: xxxxxx
+  MAILROOM_AWS_SECRET_ACCESS_KEY: xxxxx
+  MAILROOM_BATCH_WORKERS: 4
+  MAILROOM_DB: "postgres://xxxxx:xxxxx@postgres.yyyyy.com/rapidpro?sslmode=disable"
+  MAILROOM_DB_POOL_SIZE: 36
+  MAILROOM_DOMAIN: "rapidpro.app.medicmobile.org"
+  MAILROOM_HANDLER_WORKERS: 32
+  MAILROOM_ELASTIC: "https://elasticsearch_aws_url.com"
+  MAILROOM_LOG_LEVEL: "DEBUG"
+  MAILROOM_MAX_VALUE_LENGTH: 640
+  MAILROOM_PORT: 8090
+  MAILROOM_REDIS: "redis://redis.yyyyy.com:6379/15"
+  MAILROOM_RETRY_PENDING_MESSAGES: "true"
+  MAILROOM_S3_DISABLE_SSL: "false"
+  MAILROOM_S3_ENDPOINT: "https://s3.amazonaws.com"
+  MAILROOM_S3_FORCE_PATH_STYLE: "false"
+  MAILROOM_S3_MEDIA_BUCKET: "our_s3_bucket"
+  MAILROOM_S3_MEDIA_PREFIX: "media"
+  MAILROOM_S3_REGION: "eu-west-2"
+  MAILROOM_SMTP_SERVER: "smtp://messaging-service@medicmobile.org%40xxxxx@smtp.gmail.com:587/?from=messaging-service%40medicmobile.org"

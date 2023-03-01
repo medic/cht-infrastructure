@@ -1,0 +1,37 @@
+---
+rapidpro_indexer_version: "5.6.0"
+rapidpro_indexer_system_user: "rapidpro-indexer"
+rapidpro_indexer_system_group: "rapidpro-indexer"
+rapidpro_indexer_service_name: "{{ rapidpro_indexer_system_user }}"
+rapidpro_indexer_system_home: "/home/{{ rapidpro_indexer_system_user }}"
+# System architecture for the host. Possible value are:
+#   - linux_amd64
+#   - darwin_amd64
+rapidpro_indexer_system_architecture: "linux_amd64"
+# The package repository to download RapidPro Indexer tarballs from
+rapidpro_indexer_download_url: "https://github.com/nyaruka/rp-indexer/releases/download/v{{ rapidpro_indexer_version }}/rp-indexer_{{ rapidpro_indexer_version }}_{{ rapidpro_indexer_system_architecture }}.tar.gz"
+# The root directory RapidPro Indexer versioned directories are created
+rapidpro_indexer_package_directory_root: "{{ rapidpro_indexer_system_home }}/app-versioned"
+# The name to give the directory the RapidPro Indexer binary is copied to
+rapidpro_indexer_package_directory_name: "{{ rapidpro_indexer_version }}"
+rapidpro_indexer_active_package_symlink: "{{ rapidpro_indexer_system_home }}/app"
+rapidpro_indexer_postgresql_url: "postgres://rapidpro:xxxxx@postgres-yyyyy.com/rapidpro?sslmode=disable"
+rapidpro_indexer_elasticsearch_url: "https://elasticsearch_url"
+rapidpro_indexer_index: "contacts"
+rapidpro_indexer_poll: 5
+rapidpro_indexer_sentry_dsn:
+# Whether to rebuild the index before starting the service
+rapidpro_indexer_rebuild: false
+# Whether to clean old indexes when index is rebuilt
+rapidpro_indexer_cleanup: true
+rapidpro_indexer_log_level: "info"
+rapidpro_indexer_config_template: "rapidpro_indexer_active_package_symlink/indexer.toml.j2"
+# Environment variables to be used by the RapidPro Indexer service
+rapidpro_indexer_environment_vars: {
+    INDEXER_DB: "postgres://rapidpro:xxxxx@rapidpro.yyyyy.com/rapidpro?sslmode=disable",
+    INDEXER_ELASTIC_URL: "https://elasticsearch_url",
+    INDEXER_INDEX: "contacts",
+    INDEXER_POLL: 5,
+    INDEXER_LOG_LEVEL: "info",
+    INDEXER_CLEANUP: true
+}

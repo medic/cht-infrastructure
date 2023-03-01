@@ -1,0 +1,44 @@
+# Name of nodes to start, here we have a single node
+CELERYD_NODES="{{ django_celeryd_nodes }}"
+
+# Where to chdir at start.
+CELERYD_CHDIR="{{ django_codebase_path }}"
+
+# Python interpreter from environment, if using virtualenv
+ENV_PYTHON="{{ django_venv_path }}/bin/python"
+
+# How to call "manage.py celeryd_multi"
+#CELERYD_MULTI="{{ django_venv_path }}/bin/celeryd-multi"
+
+# How to call "manage.py celeryctl"
+#CELERYCTL="$ENV_PYTHON $CELERYD_CHDIR/manage.py celeryctl"
+CELERY_BIN="{{ django_venv_path }}/bin/celery"
+# Extra arguments to celeryd
+CELERYD_OPTS="{{ django_celeryd_opts }}"
+
+CELERY_APP="{{ django_celery_app }}"
+# Name of the celery config module, don't change this.
+#CELERY_CONFIG_MODULE="celeryconfig"
+
+# %n will be replaced with the nodename.
+CELERYD_LOG_FILE="{{ django_log_path }}/celery-%n.log"
+{% if django_celeryd_pid_file %}
+CELERYD_PID_FILE="{{ django_celeryd_pid_file }}"
+{% else %}
+CELERYD_PID_FILE="/run/celery-{{ django_system_user }}/%n.pid"
+{% endif %}
+
+# Workers should run as an unprivileged user.
+CELERYD_USER="{{ django_system_user }}"
+CELERYD_GROUP="{{ django_system_group }}"
+
+CELERY_CREATE_DIRS=1
+C_FORCE_ROOT=1
+CELERYD_LOG_LEVEL="{{ django_celeryd_log_level }}"
+DJANGO_SETTINGS_MODULE="{{ django_settings_module }}"
+
+{% if django_celeryd_extra_env_vars | length > 0 %}
+{% for var_name,var_value in django_celeryd_extra_env_vars.items() %}
+{{ var_name }}={{ var_value }}
+{% endfor %}
+{% endif %}

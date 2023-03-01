@@ -1,0 +1,7 @@
+---
+- name: restart courier
+  systemd:
+    name: "{{ courier_service_name }}"
+    state: restarted
+    enabled: true
+    daemon_reload: true

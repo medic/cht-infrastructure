@@ -1,0 +1,27 @@
+---
+- name: install td-agent
+  shell: curl -L https://toolbelt.treasuredata.com/sh/install-ubuntu-bionic-td-agent2.5.sh | sh
+  args:
+    warn: no
+  
+- name: add td-agent.conf
+  copy:
+    src: td-agent.conf
+    dest: /etc/td-agent/td-agent.conf
+    owner: td-agent
+    group: td-agent
+    mode: '0644'
+    backup: yes
+
+- name: install fluent elastic search plugin 
+  shell:  td-agent-gem install fluent-plugin-elasticsearch
+ 
+
+- name: install fluent systemd plugin 
+  shell:  td-agent-gem install fluent-plugin-systemd -v 1.0.1
+  notify:
+    - restart td-agent
+  
+- name: ensure that td-agent can execute in logs folder
+  command: find /var/log/ -type d -exec chmod 0775 {} \;
+

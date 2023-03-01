@@ -1,0 +1,7 @@
+---
+- name: restart mailroom
+  systemd:
+    name: "{{ mailroom_service_name }}"
+    state: restarted
+    enabled: true
+    daemon_reload: true

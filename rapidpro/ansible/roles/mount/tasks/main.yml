@@ -1,0 +1,6 @@
+---
+
+- name: Mount EBS Volumes
+  include: configure.yml
+  tags:
+    - configure

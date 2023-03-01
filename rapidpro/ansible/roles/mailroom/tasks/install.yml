@@ -1,0 +1,40 @@
+---
+- name: Make sure the Mailroom group exists
+  group:
+    name: "{{ mailroom_system_group }}"
+    state: present
+
+- name: Make sure the Mailroom user exists
+  user:
+    name: "{{ mailroom_system_user }}"
+    group: "{{ mailroom_system_group }}"
+    home: "{{ mailroom_system_home }}"
+    shell: /bin/nologin
+
+- name: Make sure the package directory exists
+  file:
+    name: "{{ mailroom_package_directory_path }}"
+    state: directory
+    owner: "{{ mailroom_system_user }}"
+    group: "{{ mailroom_system_group }}"
+    mode: 0755
+
+- name: Download Mailroom
+  unarchive:
+    src: "{{ mailroom_download_url }}"
+    dest: "{{ mailroom_package_directory_path }}"
+    remote_src: true
+    owner: "{{ mailroom_system_user }}"
+    group: "{{ mailroom_system_group }}"
+    mode: 0755
+
+- name: Make the installed version current
+  file:
+    force: true
+    state: link
+    src: "{{ mailroom_package_directory_path }}"
+    dest: "{{ mailroom_active_package_symlink }}"
+    owner: "{{ mailroom_system_user }}"
+    group: "{{ mailroom_system_group }}"
+  notify:
+    - restart mailroom

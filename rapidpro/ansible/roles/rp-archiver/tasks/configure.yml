@@ -1,0 +1,11 @@
+---
+
+- name: Copy the RapidPro Archiver environment file
+  template:
+    src: "rapidpro_archiver_active_package_symlink/environment.j2"
+    dest: "{{ rapidpro_archiver_active_package_symlink }}/environment"
+    owner: "{{ rapidpro_archiver_system_user }}"
+    group: "{{ rapidpro_archiver_system_group }}"
+    mode: 0750
+  
+

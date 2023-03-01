@@ -1,0 +1,2 @@
+- name: Install TD Agent
+  include_tasks: install.yml

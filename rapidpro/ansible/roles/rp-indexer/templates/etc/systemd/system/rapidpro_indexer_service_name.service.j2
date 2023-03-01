@@ -1,0 +1,18 @@
+
+[Unit]
+Description={{ rapidpro_indexer_service_name }} service
+After=network.target
+
+[Service]
+User={{ rapidpro_indexer_system_user }}
+Group={{ rapidpro_indexer_system_group }}
+Type=simple
+ExecStart={{ rapidpro_indexer_active_package_symlink }}/{{ rapidpro_indexer_binary_name }}
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+EnvironmentFile={{ rapidpro_indexer_active_package_symlink }}/environment
+WorkingDirectory={{ rapidpro_indexer_active_package_symlink }}
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target
