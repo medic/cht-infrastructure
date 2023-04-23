@@ -35,12 +35,12 @@ sudo chmod +x /usr/local/bin/docker-compose
 sudo useradd -d /home/medic -m medic
 sudo mkdir -p /home/medic/self-hosting/main
 
-sudo curl -s https://raw.githubusercontent.com/medic/cht-core/master/docker-compose.yml \
-  -o /home/medic/self-hosting/main/docker-compose.yml
+sudo curl -s https://raw.githubusercontent.com/medic/cht-infrastructure/main/self-hosting/prepare-system/ubuntu/final-3x-compose.yml \
+  -o /srv/docker-compose.yml
 
 HA_FILE=/srv/storage/medic-core/passwd/admin
 if test -f "$HA_FILE"; then
-    echo "HA_PASSWORD=$(sudo cat $HA_FILE)" >  /home/medic/self-hosting/main/.env
+    echo "HA_PASSWORD=$(sudo cat $HA_FILE)" >  /srv/.env
 fi
 
 sudo adduser medic sudo
